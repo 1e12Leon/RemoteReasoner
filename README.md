@@ -119,7 +119,7 @@ reasoner = RemoteReasoner(args, device=0)
     
 ```
 
-- **Pixel Reason**
+- **Pixel Reasoning**
 
 ```python
 img_path = "./assets/demo.jpg"
@@ -128,7 +128,7 @@ think, answer, mask = reasoner.Pixel_reasoning(img_path, question)
 ```
 
 
-- **Region Reason**
+- **Region Reasoning**
 
 ```python
 img_path = "./assets/demo.jpg"
@@ -136,7 +136,7 @@ queston = "your query."
 think, answer = reasoner.Region_reasoning(img_path, question)
 ```
 
-- **Contour Reason**
+- **Contour Reasoning**
 
 ```python
 img_path = "./assets/demo.jpg"
