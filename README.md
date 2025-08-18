@@ -1,6 +1,6 @@
 <div align="center">
 
-# RemoteReasoner: Towards Unifying Geospatial Reasoning Workflow
+# [RemoteReasoner: Towards Unifying Geospatial Reasoning Workflow](https://arxiv.org/pdf/2507.19280)
 
 
 
@@ -24,6 +24,8 @@ Hongbo Lu (陆泓波)
 
 \*  ✉ *Corresponding Author*
 
+🤗 Model: [RemoteReasoner](https://huggingface.co/1e12Leon/RemoteReasoner)
+
 </div>
 
 ## News
@@ -41,10 +43,134 @@ In contrast to existing methods, our framework is trained with reinforcement lea
 At the inference stage, our transformation strategies enable diverse task output formats without requiring task-specific decoders or further fine-tuning. Experiments demonstrated that RemoteReasoner achieves state-of-the-art (SOTA) performance across multi-granularity reasoning tasks. Furthermore, it retains the MLLM's inherent generalization capability, demonstrating robust performance on unseen tasks and out-of-distribution categories. 
 ![RemoteReasoner](assets/RemoteReasoner.jpg)
 
+
+## Quick Start
+
+### Setting Up
+
+1. Clone this repository.
+2. Change directory to root of this repository.
+3. Create a new environment and install the packages via pip.
+
+```shell
+git clone https://github.com/1e12Leon/RemoteReasoner.git
+cd RemoteReasoner
+pip install -e .
+```
+
+Download the pre-trained weights of RemoteReasoner from [HuggingFace](https://huggingface.co/1e12Leon/RemoteReasoner)
+
+
+### Training
+We provides training scripts to fine-tune Qwen2.5-VL-7B-Instruct with GRPO (Group Relative Policy Optimization) using LoRA. The training leverages multi-GPU distributed training with DeepSpeed ZeRO-3 for efficient memory usage.
+
+```shell
+bash RemoteReasoner_GRPO.sh
+```
+#### ⚙️ Key Arguments
+
+| Category              | Argument                              | Description                                                                 | Default / Value |
+|------------------------|---------------------------------------|-----------------------------------------------------------------------------|-----------------|
+| **Model & Dataset**    | `--model`                            | Path to the base model (e.g., Qwen2.5-VL-7B-Instruct).                      | `./Qwen2.5-VL/Qwen2.5-VL-7B-Instruct/` |
+|                        | `--dataset`                          | Path to the training dataset.                                               | `./Train.json`  |
+|                        | `--val_dataset`                      | Path to the validation dataset.                                             | `./Val.json`    |
+| **Training Config**    | `--rlhf_type`                        | Reinforcement learning type.                                                | `grpo`          |
+|                        | `--train_type`                       | Training method (LoRA fine-tuning).                                         | `lora`          |
+|                        | `--torch_dtype`                      | Data type for training.                                                     | `bfloat16`      |
+|                        | `--num_train_epochs`                 | Number of training epochs.                                                  | `24`            |
+|                        | `--learning_rate`                    | Learning rate.                                                              | `1e-6`          |
+| **LoRA Parameters**    | `--lora_rank`                        | Rank of the LoRA decomposition.                                             | `8`             |
+|                        | `--lora_alpha`                       | Scaling factor for LoRA adaptation.                                         | `16`            |
+|                        | `--target_modules`                   | Apply LoRA to specific modules.                                             | `all-linear`    |
+| **Batch & Optimizer**  | `--per_device_train_batch_size`       | Batch size per GPU.                                                         | `8`             |
+|                        | `--gradient_accumulation_steps`      | Steps to accumulate gradients before update.                                | `8`             |
+|                        | `--gradient_checkpointing`           | Enable memory-efficient gradient checkpointing.                             | `true`          |
+|                        | `--warmup_ratio`                     | Ratio of total steps for LR warmup.                                         | `0.05`          |
+| **Eval & Logging**     | `--eval_steps`                       | Run evaluation every N steps.                                               | `40000`         |
+|                        | `--save_steps`                       | Save checkpoints every N steps.                                             | `10`            |
+|                        | `--save_total_limit`                 | Keep only the most recent checkpoints.                                      | `2`             |
+|                        | `--logging_steps`                    | Log training metrics every N steps.                                         | `5`             |
+|                        | `--report_to`                        | Logging backend.                                                            | `tensorboard`   |
+| **Generation & Reward**| `--num_generations`                  | Number of generations per step.                                             | `4`             |
+|                        | `--temperature`                      | Sampling temperature for text generation.                                   | `0.9`           |
+|                        | `--reward_funcs`                     | Reward functions used (e.g., format, external visual grounding accuracy).    | `format external_vg_acc` |
+|                        | `--external_plugins`                 | Path to custom plugin for external rewards.                                 | `./custom/custom_plugin.py` |
+| **Distributed**        | `--deepspeed`                        | Enable DeepSpeed optimization.                                              | `zero3`         |
+|                        | `--ddp_find_unused_parameters`       | Whether to allow unused parameters in DDP.                                  | `false`         |
+|                        | `NPROC_PER_NODE`                     | Number of processes (GPUs) per node.                                        | `8`             |
+|                        | `CUDA_VISIBLE_DEVICES`               | List of GPUs used for training.                                             | `0,1,2,3,4,5,6,7` |
+
+### Getting Started 
+
+Firstly, you need initialize a model and load the RemoteReasoner checkpoint with a few lines of code:
+
+```python
+import cv2
+import numpy as np
+from RemoteReasoner import RemoteReasoner
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--lora_path', type=str, required=True, 
+                    help="Path to the LoRA adapter model")
+args = parser.parse_args()
+
+logger.info("Initializing RemoteReasoner...")
+reasoner = RemoteReasoner(args, device=0)
+    
+```
+
+- **Pixel Reason**
+
+```python
+img_path = "./assets/demo.jpg"
+queston = "your query."
+think, answer, mask = reasoner.Pixel_reasoning(img_path, question)
+```
+
+
+- **Region Reason**
+
+```python
+img_path = "./assets/demo.jpg"
+queston = "your query."
+think, answer = reasoner.Region_reasoning(img_path, question)
+```
+
+- **Contour Reason**
+
+```python
+img_path = "./assets/demo.jpg"
+queston = "your query."
+think, answer, contour = reasoner.Contour_reasoning(img_path, question)
+```
+
+- **Visual Queston Answering**
+
+```python
+img_path = "./assets/demo.jpg"
+queston = "your question."
+think, answer = reasoner.VQA(img_path, question)
+```
+
+- **Image Captioning**
+
+```python
+img_path = "./assets/demo.jpg"
+think, answer, mask = reasoner.Image_captioning(img_path)
+```
+
 ## Acknowledge
 
+- Thanks to Kaiyu for providing the EarthReason dataset
+- Thanks for the [MS-SWIFT](https://github.com/modelscope/ms-swift.git) repo.
 
 ## Cite
 If you find this work useful, please cite our paper as:
 
 ```
+@article{yao2025remotereasoner,
+  title={RemoteReasoner: Towards Unifying Geospatial Reasoning Workflow},
+  author={Yao, Liang and Liu, Fan and Lu, Hongbo and Zhang, Chuanyi and Min, Rui and Xu, Shengxiang and Di, Shimin and Peng, Pai},
+  journal={arXiv preprint arXiv:2507.19280},
+  year={2025}
+}
