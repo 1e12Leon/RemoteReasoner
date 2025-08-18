@@ -161,7 +161,7 @@ think, answer, mask = reasoner.Image_captioning(img_path)
 
 ## Acknowledge
 
-- Thanks to Kaiyu for providing the EarthReason dataset
+- Thanks to [Kaiyu](https://likyoo.github.io/) for providing the [EarthReason](https://huggingface.co/datasets/earth-insights/EarthReason) dataset
 - Thanks for the [MS-SWIFT](https://github.com/modelscope/ms-swift.git) repo.
 
 ## Cite
