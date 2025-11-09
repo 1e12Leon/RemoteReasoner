@@ -30,6 +30,7 @@ Hongbo Lu (陆泓波)
 
 ## News
 
+- **2025/7/5** Our paper "RemoteReasoner: Towards Unifying Geospatial Reasoning Workflow" is accepted by AAAI 2026!
 - **2025/08/16** Welcome to RemoteReasoner. This is the first Reinforcement Learning-based reasoning framework in remote sensing.
 
 
