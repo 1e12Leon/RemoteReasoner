@@ -1,0 +1,51 @@
+import os
+from huggingface_hub import HfApi, HfFolder, create_repo, upload_folder
+
+# 1. Login to Hugging Face (requires token)
+def login_to_huggingface(token):
+    """
+    Login to Hugging Face using an access token.
+    Token can be obtained from environment variable or user input.
+    """
+    if not token:
+        token = input("Please enter your Hugging Face access token: ")
+    HfFolder.save_token(token)
+    print("Login successful!")
+
+# 2. Upload model folder to Hugging Face Hub
+def upload_to_huggingface(
+    local_dir: str,
+    repo_id: str,
+    commit_message: str = "Upload model using huggingface_hub"
+):
+    """
+    Upload a local folder to Hugging Face Hub.
+    
+    Args:
+        local_dir: Path to the local model folder
+        repo_id: Repository ID in the format "username/repo-name"
+        commit_message: Commit message for the upload
+    """
+    # Create repository if it doesn't exist
+    create_repo(repo_id, exist_ok=True)
+    
+    # Upload the entire folder
+    api = HfApi()
+    api.upload_folder(
+        folder_path=local_dir,
+        repo_id=repo_id,
+        commit_message=commit_message
+    )
+    print(f"Model successfully uploaded to https://huggingface.co/{repo_id}")
+
+if __name__ == "__main__":
+    # Configuration parameters
+    # Get TOKEN from environment variable (recommended for security)
+    TOKEN = os.environ.get("HUGGINGFACE_TOKEN", None)  # Use environment variable to avoid hardcoding sensitive information
+    LOCAL_MODEL_DIR = "RemoteReasoner-7B-merged-bf16"  # Replace with your model path
+    REPO_ID = "your-username/your-repo-name"  # Replace with your username and repository name
+    COMMIT_MESSAGE = "Upload RemoteReasoner-7B"
+    
+    # Execute login and upload
+    login_to_huggingface(TOKEN)
+    upload_to_huggingface(LOCAL_MODEL_DIR, REPO_ID, COMMIT_MESSAGE)

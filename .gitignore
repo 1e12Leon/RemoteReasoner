@@ -1,0 +1,131 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model checkpoints and weights (LARGE FILES - DO NOT UPLOAD)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.h5
+*.pb
+*.onnx
+checkpoints/
+RemoteReasoner-7B-merged-bf16/
+models--*/
+*.model
+*.weights
+
+# Logs and outputs
+logs/
+outputs/
+*.log
+tensorboard/
+wandb/
+runs/
+
+# Training artifacts
+adapter_config.json
+adapter_model.safetensors
+rng_state_*.pth
+scheduler.pt
+trainer_state.json
+optimizer.pt
+
+# Data files
+datasets/
+data/
+*.csv
+# Ignore JSON data files but keep config files
+*.json
+!package.json
+!tsconfig.json
+!setup.cfg
+!Train.json
+!Val.json
+!*config*.json
+
+# Gradio cache
+.gradio/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Secrets and credentials (CRITICAL - NEVER COMMIT)
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+credentials.json
+secrets.json
+token.txt
+*_token
+*_secret
+push_hf.py
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Distributions
+*.whl
+
+# Generated images/masks from inference
+*_mask.png
+*_contour.png
+*_output.png
+*_result.png

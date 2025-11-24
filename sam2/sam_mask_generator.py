@@ -4,8 +4,8 @@ import ast
 import torch
 import numpy as np
 from PIL import Image
-from sam.build_sam import build_sam2
-from sam.sam2_image_predictor import SAM2ImagePredictor
+from sam2.build_sam import build_sam2
+from sam2.sam2_image_predictor import SAM2ImagePredictor
 import warnings
 
 # Ignore specific warnings
@@ -130,8 +130,8 @@ class SAMMaskGenerator:
 # Example usage
 if __name__ == "__main__":
     # Initialize model
-    checkpoint = "/home/leon.yao/code/sam2/checkpoints/sam2.1_hiera_large.pt"
-    model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
+    checkpoint = "/home/dishimin/yaoliang/RemoteReasoner/sam2.1_hiera_large.pt"
+    model_cfg = "/home/dishimin/yaoliang/RemoteReasoner/sam2/configs/sam2.1/sam2.1_hiera_l.yaml"
     mask_generator = SAMMaskGenerator(checkpoint, model_cfg)
     
     # Example input

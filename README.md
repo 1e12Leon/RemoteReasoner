@@ -47,19 +47,40 @@ At the inference stage, our transformation strategies enable diverse task output
 
 ## Quick Start
 
+### Prerequisites
+
+- Python >= 3.8
+- CUDA >= 11.8 (for GPU support)
+- 16GB+ GPU memory recommended
+
 ### Setting Up
 
-1. Clone this repository.
-2. Change directory to root of this repository.
-3. Create a new environment and install the packages via pip.
-
+1. Clone this repository:
 ```shell
 git clone https://github.com/1e12Leon/RemoteReasoner.git
 cd RemoteReasoner
+```
+
+2. Install dependencies:
+```shell
 pip install -e .
 ```
 
-Download the pre-trained weights of RemoteReasoner from [HuggingFace](https://huggingface.co/1e12Leon/RemoteReasoner)
+3. Download the pre-trained weights:
+   - **RemoteReasoner Model**: Download from [HuggingFace](https://huggingface.co/1e12Leon/RemoteReasoner)
+   - **SAM2 Weights**: Download SAM2 model weights and place them in the root directory:
+     - `sam2.1_hiera_tiny.pt` (149MB) - [Download Link](https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt)
+     - `sam2.1_hiera_large.pt` (857MB) - Optional, for better performance
+
+4. Organize your directory structure:
+```
+RemoteReasoner/
+├── checkpoints/
+│   └── RemoteReasoner-7B-merged-bf16/  # Place downloaded model here
+├── sam2.1_hiera_tiny.pt
+├── RemoteReasoner.py
+└── ...
+```
 
 
 ### Training
@@ -101,21 +122,21 @@ bash RemoteReasoner_GRPO.sh
 |                        | `NPROC_PER_NODE`                     | Number of processes (GPUs) per node.                                        | `8`             |
 |                        | `CUDA_VISIBLE_DEVICES`               | List of GPUs used for training.                                             | `0,1,2,3,4,5,6,7` |
 
-### Getting Started 
+### Inference 
 
-Firstly, you need initialize a model and load the RemoteReasoner checkpoint with a few lines of code:
+Initialize the model and load the RemoteReasoner checkpoint:
 
 ```python
-import cv2
-import numpy as np
+import argparse
 from RemoteReasoner import RemoteReasoner
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--lora_path', type=str, required=True, 
-                    help="Path to the LoRA adapter model")
+parser.add_argument('--model_path', type=str, 
+                    default='checkpoints/RemoteReasoner-7B-merged-bf16',
+                    help="Path to the model")
 args = parser.parse_args()
 
-logger.info("Initializing RemoteReasoner...")
+# Initialize RemoteReasoner
 reasoner = RemoteReasoner(args, device=0)
     
 ```
@@ -124,8 +145,10 @@ reasoner = RemoteReasoner(args, device=0)
 
 ```python
 img_path = "./assets/demo.jpg"
-queston = "your query."
+question = "your query."
 think, answer, mask = reasoner.Pixel_reasoning(img_path, question)
+# Save the mask
+mask.save("output_mask.png")
 ```
 
 
